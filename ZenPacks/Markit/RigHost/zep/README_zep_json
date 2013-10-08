@@ -1,0 +1,245 @@
+Do NOT, repeat NOT have any comment lines in the active json files
+Comments are not permitted and lines starting with // will cause an error when the ZenPack is loaded
+such as:
+         ValueError: No JSON object could be decoded
+
+Ensure that your active file names are:
+        zep.json
+        actions.json
+
+Ensure no commas on the final line of a clause - JSON is not as forgiving as Python
+
+You can generate any required UUID fields with interactive Python from  a
+command line and then copy/paste the resulting uuid into the json file:
+        python -c "import uuid; print uuid.uuid4()"
+
+In zep.json, to define multiple event details fields, use:
+{
+    "EventDetailItem": [
+        {
+            "key": "rig",
+            "type": "1",
+            "name": "Rig"
+        },
+        {
+            "key": "host",
+            "type": "1",
+            "name": "Host"
+        },
+        {
+            "key": "app",
+            "type": "1",
+            "name": "App"
+        }
+    ]
+}
+ 
+EventDetailItem is the required reserved keyword and is a list of dictionaries
+where each dictionary specifies a field.  The key attribute must match the name
+of the event attribute; the name field is the user-friendly name used in the GUI.
+In the above example, an event transform creates evt.rig, evt.host and evt.app.
+The GUI Event Console allows you to select event fields to display of
+Rig, Host and App - note the capitalisation.  Make sure you scroll down in the
+Columns to display list - the new fields will be at the bottom.
+
+NOTE that these fields are not available for creating triggers - this is due to a bug
+ticketed as ZEN-8391.
+
+In the actions.json file, where do you find the names of the legal fields that you need?
+
+Basic NotificationSubscription fields are in /opt/zenoss/Products/ZenModel/NotificationSubscription.py
+in the NotificationSubscription class:
+
+class NotificationSubscription(ZenModelRM, AdministrativeRoleable):
+    """
+    A subscription to a signal that produces notifications in the form of
+    actions.
+    """
+    implements(IGloballyIdentifiable)
+
+    _id = "NotificationSubscription"
+    meta_type = _id
+
+    enabled = False
+    action = 'email'
+    send_clear = False
+
+    delay_seconds = 0
+    repeat_seconds = 0
+    send_initial_occurrence = True
+
+    # recipients is a list of uuids that will recieve the push from this
+    # notification. (the User, Group or Role to email/page/etc.)
+    # the uuid objects will need to implement some form of actionable target
+    # See IAction classes for more info.
+    recipients = []
+
+    # a list of trigger uuids that this notification is subscribed to.
+    subscriptions = []
+
+    _properties = ZenModelRM._properties + (
+        {'id':'enabled', 'type':'boolean', 'mode':'w'},
+        {'id':'send_clear', 'type':'boolean', 'mode':'w'},
+        {'id':'send_initial_occurrence', 'type':'boolean', 'mode':'w'},
+        {'id':'delay_seconds', 'type':'int', 'mode':'w'},
+        {'id':'repeat_seconds', 'type':'int', 'mode':'w'},
+    )
+
+These properties are the generic fields we need - enabled, send_clear, send_initial_occurrence,
+delay_seconds and repeat_seconds.
+
+
+Notification-specific fields are in /opt/zenoss/Products/Zuul/interfaces/actions.py so the 
+ICommandActionContentInfo class defines:
+class ICommandActionContentInfo(IInfo):
+
+    action_timeout = schema.Int(
+        title       = _t(u'Command Timeout (seconds)'),
+        description = _t(u'How long before the command times out.'),
+        default     = 60
+    )
+
+    body_format = schema.Text(
+        title       = _t(u'Command'),
+        description = _t(u'The template for the body for commands.')
+    )
+
+    clear_body_format = schema.Text(
+        title       = _t(u'Clear Command'),
+        description = _t(u'The template for the body for CLEAR commands.')
+    )
+
+    user_env_format = schema.Text(
+        title       = _t(u'Environment variables'),
+        description = _t(u'A semi-colon separated list of environment variables.'),
+    )
+
+ - giving us the action_timeout, body_format, clear_body_format and user_env_format.
+
+
+Finding Trigger information seems harder. /opt/zenoss/Products/ZenModel/Trigger.py defines
+the Trigger class but does not offer the properties we need:
+
+class Trigger(ZenModelRM, AdministrativeRoleable):
+    """
+    A stub object that is used for managing permissions.
+    """
+    implements(IGloballyIdentifiable)
+    security = ClassSecurityInfo()
+
+    _id = "Trigger"
+    meta_type = _id
+
+    _properties = ZenModelRM._properties
+
+/opt/zenoss/Products/Zuul/interfaces/triggers.py also offers no useful help.  The best hints
+appear to be in /opt/zenoss/Products//Zuul/facades/triggersfacade.py:
+
+    def addTrigger(self, newId):
+        return self.createTrigger(
+            name = newId,
+            uuid = None,
+            rule = dict(
+                source = ''
+            )
+        )
+
+    def createTrigger(self, name, uuid=None, rule=None):
+        name = str(name)
+        triggerObject = Trigger(name)
+        self._getTriggerManager()._setObject(name, triggerObject)
+        acquired_trigger = self._getTriggerManager().findChild(name)
+
+        if uuid:
+            IGlobalIdentifier(acquired_trigger).guid = str(uuid)
+        else:
+            IGlobalIdentifier(acquired_trigger).create()
+
+        self.triggerPermissions.setupTrigger(acquired_trigger)
+
+        trigger = zep.EventTrigger()
+        trigger.uuid = IGlobalIdentifier(acquired_trigger).guid
+        trigger.name = name
+        trigger.rule.api_version = 1
+        trigger.rule.type = zep.RULE_TYPE_JYTHON
+
+        if rule and 'source' in rule:
+            trigger.rule.source = rule['source']
+        else:
+            trigger.rule.source = ''
+
+        self.triggers_service.addTrigger(trigger)
+
+        log.debug('Created trigger with uuid: %s ' % trigger.uuid)
+        return trigger.uuid
+                                                             
+Once you have the correct syntax for your JSON fields, the key thing to match up
+is that the notification s subscriptions field needs to reference the trigger(s)
+uuid.  NOTE that this subscriptions field is a list (as you can have several triggers).
+I have no idea what the guid field is in the notification, nor where it is defined but
+it IS required.
+
+{
+    "triggers": [
+        {
+            "name": "Rig_down_test",
+            "uuid": "b04dd556-4ca4-47de-a2c7-a6d4c9e39096",
+            "enabled": true,
+            "rule": {
+                "api_version": 1,
+                "source": "(evt.event_class.startswith(\"/Rig\")) and (evt.status == 0) and (evt.severity > 2)",
+                "type": 1
+            }
+        },
+        {
+            "name": "Rig_up_test",
+            "uuid": "71ec3971-f8f2-4787-b2d3-3fda578cf3da",
+            "enabled": true,
+            "rule": {
+                "api_version": 1,
+                "source": "(evt.event_class.startswith(\"/Rig\")) and (evt.status == 0) and (evt.severity <= 2)",
+                "type": 1
+            }
+        }
+    ],
+    "notifications": [
+        {
+            "id": "rig_down_test_command",
+            "description": "Rig down command from ZenPack.",
+            "guid": "0445fb10-9f96-4f51-bc15-c25e30de3faa",
+            "action": "command",
+            "enabled": true,
+            "action_timeout": 60,
+            "delay_seconds": 0,
+            "repeat_seconds": 0,
+            "send_initial_occurrence": false,
+            "send_clear": false,
+            "body_format": "/opt/zenoss/local/rig_host_app_transform1.py  ${evt/rig} ${evt/host} ${evt/app} 300",
+            "clear_body_format": "",
+            "subscriptions": ["b04dd556-4ca4-47de-a2c7-a6d4c9e39096"]
+        },
+        {
+            "id": "rig_up_test_command",
+            "description": "Rig up command from ZenPack.",
+            "guid": "18e81b7a-d5b2-461a-a1e2-e4f3a216dfb2",
+            "action": "command",
+            "enabled": true,
+            "action_timeout": 60,
+            "delay_seconds": 0,
+            "repeat_seconds": 0,
+            "send_initial_occurrence": false,
+            "send_clear": false,
+            "body_format": "/opt/zenoss/local/rig_host_app_transform1.py  ${evt/rig} ${evt/host} ${evt/app} 1000",
+            "clear_body_format": "",
+            "subscriptions": ["71ec3971-f8f2-4787-b2d3-3fda578cf3da"]
+        }
+    ]
+}
+
+
+Note that when a ZenPack is removed, event fields are removed; however notifications and triggers
+are NOT removed.
+
+If a trigger or notification already exists when a ZenPack is installed then it will be overriden
+by the definition in the ZenPack.
+

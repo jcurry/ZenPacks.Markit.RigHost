@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+<objects>
+<!-- ('', 'zport', 'dmd', 'Events', 'Rig') -->
+<object id='/zport/dmd/Events/Rig' module='Products.ZenEvents.EventClass' class='EventClass'>
+<object id='Rig_Stop' module='Products.ZenEvents.EventClass' class='EventClass'>
+<tomanycont id='instances'>
+<object id='Rig_Stop' module='Products.ZenEvents.EventClassInst' class='EventClassInst'>
+<property type="text" id="transform" mode="w" >
+evt.component = evt.rig
+# You cannot generate user-defined fields with null value - null string or None
+evt.host='None'
+evt.app='None'
+</property>
+<property type="string" id="eventClassKey" mode="w" >
+Rig
+</property>
+<property type="int" id="sequence" mode="w" >
+10
+</property>
+<property type="string" id="regex" mode="w" >
+User=(?P&lt;user&gt;\S+)\s+Rig=(?P&lt;rig&gt;\S+)\s+stop
+</property>
+<property type="string" id="example" mode="w" >
+User=jane Rig=MW-RIG3 stop
+</property>
+</object>
+</tomanycont>
+</object>
+<object id='Rig_Start' module='Products.ZenEvents.EventClass' class='EventClass'>
+<tomanycont id='instances'>
+<object id='Rig_Start' module='Products.ZenEvents.EventClassInst' class='EventClassInst'>
+<property type="text" id="transform" mode="w" >
+evt.component = evt.rig
+# You cannot generate user-defined fields with null value - null string or None
+evt.host='None'
+evt.app='None'
+</property>
+<property type="string" id="eventClassKey" mode="w" >
+Rig
+</property>
+<property type="int" id="sequence" mode="w" >
+10
+</property>
+<property type="string" id="regex" mode="w" >
+User=(?P&lt;user&gt;\S+)\s+Rig=(?P&lt;rig&gt;\S+)\s+start
+</property>
+<property type="string" id="example" mode="w" >
+User=jane Rig=MW-PRODUCTION start
+</property>
+</object>
+</tomanycont>
+</object>
+<object id='Host_Stop' module='Products.ZenEvents.EventClass' class='EventClass'>
+<tomanycont id='instances'>
+<object id='Host_Stop' module='Products.ZenEvents.EventClassInst' class='EventClassInst'>
+<property type="text" id="transform" mode="w" >
+evt.component = evt.rig + '_' + evt.host
+# You cannot generate user-defined fields with null value - null string or None
+evt.app='None'
+</property>
+<property type="string" id="eventClassKey" mode="w" >
+Rig
+</property>
+<property type="int" id="sequence" mode="w" >
+10
+</property>
+<property type="string" id="regex" mode="w" >
+User=(?P&lt;user&gt;\S+)\s+Rig=(?P&lt;rig&gt;\S+)\s+Host=(?P&lt;host&gt;\S+)\s+stop
+</property>
+<property type="string" id="example" mode="w" >
+User=jane Rig=MW-RIG3 Host=testapp36 stop
+</property>
+</object>
+</tomanycont>
+</object>
+<object id='Host_Start' module='Products.ZenEvents.EventClass' class='EventClass'>
+<tomanycont id='instances'>
+<object id='Host_Start' module='Products.ZenEvents.EventClassInst' class='EventClassInst'>
+<property type="text" id="transform" mode="w" >
+evt.component = evt.rig + '_' + evt.host
+# You cannot generate user-defined fields with null value - null string or None
+evt.app='None'
+</property>
+<property type="string" id="eventClassKey" mode="w" >
+Rig
+</property>
+<property type="int" id="sequence" mode="w" >
+10
+</property>
+<property type="string" id="regex" mode="w" >
+User=(?P&lt;user&gt;\S+)\s+Rig=(?P&lt;rig&gt;\S+)\s+Host=(?P&lt;host&gt;\S+)\s+start
+</property>
+<property type="string" id="example" mode="w" >
+User=jane Rig=MW-RIG3 Host=testapp36 start
+</property>
+</object>
+</tomanycont>
+</object>
+<object id='App_Start' module='Products.ZenEvents.EventClass' class='EventClass'>
+<tomanycont id='instances'>
+<object id='App_Start' module='Products.ZenEvents.EventClassInst' class='EventClassInst'>
+<property type="text" id="transform" mode="w" >
+evt.component = evt.rig + '_' + evt.host+'_'+evt.app
+</property>
+<property type="string" id="eventClassKey" mode="w" >
+Rig
+</property>
+<property type="int" id="sequence" mode="w" >
+10
+</property>
+<property type="string" id="regex" mode="w" >
+User=(?P&lt;user&gt;\S+)\s+Rig=(?P&lt;rig&gt;\S+)\s+Host=(?P&lt;host&gt;\S+)\s+App=(?P&lt;app&gt;\S+)\s+start
+</property>
+<property type="string" id="example" mode="w" >
+User=jane Rig=MW-RIG3 Host=testapp36 App=testapp1 start
+</property>
+</object>
+<object id='App_Start_No_Host' module='Products.ZenEvents.EventClassInst' class='EventClassInst'>
+<property type="text" id="transform" mode="w" >
+evt.component = evt.rig + '_'+evt.app
+# You cannot generate user-defined fields with null value - null string or None
+evt.host='None'
+</property>
+<property type="string" id="eventClassKey" mode="w" >
+Rig
+</property>
+<property type="int" id="sequence" mode="w" >
+10
+</property>
+<property type="string" id="regex" mode="w" >
+User=(?P&lt;user&gt;\S+)\s+Rig=(?P&lt;rig&gt;\S+)\s+App=(?P&lt;app&gt;\S+)\s+start
+</property>
+<property type="string" id="example" mode="w" >
+User=jane Rig=MW-RIG3 App=testapp1 start
+</property>
+</object>
+</tomanycont>
+</object>
+<object id='App_Stop' module='Products.ZenEvents.EventClass' class='EventClass'>
+<tomanycont id='instances'>
+<object id='App_Stop' module='Products.ZenEvents.EventClassInst' class='EventClassInst'>
+<property type="text" id="transform" mode="w" >
+evt.component = evt.rig + '_' + evt.host+'_'+evt.app
+</property>
+<property type="string" id="eventClassKey" mode="w" >
+Rig
+</property>
+<property type="int" id="sequence" mode="w" >
+10
+</property>
+<property type="string" id="regex" mode="w" >
+User=(?P&lt;user&gt;\S+)\s+Rig=(?P&lt;rig&gt;\S+)\s+Host=(?P&lt;host&gt;\S+)\s+App=(?P&lt;app&gt;\S+)\s+stop
+</property>
+<property type="string" id="example" mode="w" >
+User=jane Rig=MW-RIG3 Host=testapp36 App=testapp1 stop
+</property>
+</object>
+<object id='App_Stop_No_Host' module='Products.ZenEvents.EventClassInst' class='EventClassInst'>
+<property type="text" id="transform" mode="w" >
+evt.component = evt.rig + '_'+evt.app
+# You cannot generate user-defined fields with null value - null string or None
+evt.host='None'
+</property>
+<property type="string" id="eventClassKey" mode="w" >
+Rig
+</property>
+<property type="int" id="sequence" mode="w" >
+10
+</property>
+<property type="string" id="regex" mode="w" >
+User=(?P&lt;user&gt;\S+)\s+Rig=(?P&lt;rig&gt;\S+)\s+App=(?P&lt;app&gt;\S+)\s+stop
+</property>
+<property type="string" id="example" mode="w" >
+User=jane Rig=MW-RIG3 App=testapp1 stop
+</property>
+</object>
+</tomanycont>
+</object>
+</object>
+</objects>

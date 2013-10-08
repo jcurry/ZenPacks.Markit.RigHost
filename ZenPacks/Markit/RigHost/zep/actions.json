@@ -1,0 +1,56 @@
+{
+    "triggers": [
+        {
+            "name": "Rig_down_test",
+            "uuid": "b04dd556-4ca4-47de-a2c7-a6d4c9e39096",
+            "enabled": true,
+            "rule": {
+                "api_version": 1,
+                "source": "(evt.event_class.startswith(\"/Rig\")) and (evt.status == 0) and (evt.severity > 2)",
+                "type": 1
+            }
+        },
+        {
+            "name": "Rig_up_test",
+            "uuid": "71ec3971-f8f2-4787-b2d3-3fda578cf3da",
+            "enabled": true,
+            "rule": {
+                "api_version": 1,
+                "source": "(evt.event_class.startswith(\"/Rig\")) and (evt.status == 0) and (evt.severity <= 2)",
+                "type": 1
+            }
+        }
+    ],
+    "notifications": [
+        {
+            "id": "rig_down_test_command",
+            "description": "Rig down command from ZenPack.",
+            "guid": "0445fb10-9f96-4f51-bc15-c25e30de3faa",
+            "action": "command",
+            "enabled": true,
+            "action_timeout": 60,
+            "delay_seconds": 0,
+            "repeat_seconds": 0,
+            "send_initial_occurrence": false,
+            "send_clear": false,
+            "body_format": "/opt/zenoss/libexec/rig_host_app_transform1.py  ${evt/MwireRig} ${evt/MwireHost} ${evt/MwireApp} 300",
+            "clear_body_format": "",
+            "subscriptions": ["b04dd556-4ca4-47de-a2c7-a6d4c9e39096"]
+        },
+        {
+            "id": "rig_up_test_command",
+            "description": "Rig up command from ZenPack.",
+            "guid": "18e81b7a-d5b2-461a-a1e2-e4f3a216dfb2",
+            "action": "command",
+            "enabled": true,
+            "action_timeout": 60,
+            "delay_seconds": 0,
+            "repeat_seconds": 0,
+            "send_initial_occurrence": false,
+            "send_clear": false,
+            "body_format": "/opt/zenoss/libexec/rig_host_app_transform1.py  ${evt/MwireRig} ${evt/MwireHost} ${evt/MwireApp} 1000",
+            "clear_body_format": "",
+            "subscriptions": ["71ec3971-f8f2-4787-b2d3-3fda578cf3da"]
+        }
+    ]
+}

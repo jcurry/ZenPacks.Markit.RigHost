@@ -1,0 +1,20 @@
+{
+    "EventDetailItem": [
+        {
+            "key": "MwireRig",
+            "type": "1",
+            "name": "Rig"
+        },
+        {
+            "key": "MwireHost",
+            "type": "1",
+            "name": "Host"
+        },
+        {
+            "key": "MwireApp",
+            "type": "1",
+            "name": "App"
+        }
+    ]
+}
+

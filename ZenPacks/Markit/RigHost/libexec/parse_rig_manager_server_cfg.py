@@ -63,12 +63,12 @@ def addHostToSys(host, sys):
 # Clean out all systems under /RIGS/MWIRE first
 # create a context for the sync function
 
-@transact
-def delOrgs():
-    dmd.Systems.manage_deleteOrganizer('/Systems/RIGS/MWIRE')
-
-delOrgs()
-
+#@transact
+#def delOrgs():
+#    dmd.Systems.manage_deleteOrganizer('/Systems/RIGS/MWIRE')
+#
+#delOrgs()
+#
 #commit()
 
 # Collect updates in updateList
@@ -114,7 +114,7 @@ for line in rmf:
                   dmd.Systems.manage_addOrganizer(newsys)
                   dmd.Systems.getOrganizer(newsys).description='Added by parse_rig_manager_script at ' + localtime
               addOrg()
-              #commit()
+              commit()
           except:
               transaction.abort()
               logfile.write("Encountered error. adding system %s\n" % (newsys))

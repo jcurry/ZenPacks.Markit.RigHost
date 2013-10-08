@@ -1,11 +1,323 @@
-Tue Oct  8 13:53:19 2013
+Tue Oct  8 15:14:08 2013
 
 System /RIGS/MWIRE 
-    Devices: for system /RIGS/MWIRE  prodapp16 , proddb22 , testapp14 , testapp15 , testapp36 , testdb20 , testdb33 , testdb33_app ,
+    Devices: for system /RIGS/MWIRE  prodapp16 , proddb22 , testapp14 , testapp15 , testapp36 , testdb20 , testdb33 ,
+
+System /RIGS/MWIRE/DR 
+    Devices: for system /RIGS/MWIRE/DR 
+
+System /RIGS/MWIRE/DR/DBS 
+    Devices: for system /RIGS/MWIRE/DR/DBS 
+
+System /RIGS/MWIRE/DR/EU 
+    Devices: for system /RIGS/MWIRE/DR/EU 
+
+System /RIGS/MWIRE/DR/OAS 
+    Devices: for system /RIGS/MWIRE/DR/OAS 
+
+System /RIGS/MWIRE/DR/REPO 
+    Devices: for system /RIGS/MWIRE/DR/REPO 
+
+System /RIGS/MWIRE/DR/TMS 
+    Devices: for system /RIGS/MWIRE/DR/TMS 
+
+System /RIGS/MWIRE/MTMProd 
+    Devices: for system /RIGS/MWIRE/MTMProd 
+
+System /RIGS/MWIRE/MTMProd/MQ 
+    Devices: for system /RIGS/MWIRE/MTMProd/MQ 
+
+System /RIGS/MWIRE/MTMUAT 
+    Devices: for system /RIGS/MWIRE/MTMUAT 
+
+System /RIGS/MWIRE/MTMUAT/MQ 
+    Devices: for system /RIGS/MWIRE/MTMUAT/MQ 
+
+System /RIGS/MWIRE/NFT1 
+    Devices: for system /RIGS/MWIRE/NFT1 
+
+System /RIGS/MWIRE/NFT1/DBS 
+    Devices: for system /RIGS/MWIRE/NFT1/DBS 
+
+System /RIGS/MWIRE/NFT1/EU 
+    Devices: for system /RIGS/MWIRE/NFT1/EU 
+
+System /RIGS/MWIRE/NFT1/INJ 
+    Devices: for system /RIGS/MWIRE/NFT1/INJ 
+
+System /RIGS/MWIRE/NFT1/MEMC 
+    Devices: for system /RIGS/MWIRE/NFT1/MEMC 
+
+System /RIGS/MWIRE/NFT1/TMS 
+    Devices: for system /RIGS/MWIRE/NFT1/TMS 
+
+System /RIGS/MWIRE/Production 
+    Devices: for system /RIGS/MWIRE/Production  prodapp16 , proddb22 ,
+
+System /RIGS/MWIRE/Production/DBS 
+    Devices: for system /RIGS/MWIRE/Production/DBS  proddb22 ,
+
+System /RIGS/MWIRE/Production/EU 
+    Devices: for system /RIGS/MWIRE/Production/EU 
+
+System /RIGS/MWIRE/Production/JBOSS 
+    Devices: for system /RIGS/MWIRE/Production/JBOSS 
+
+System /RIGS/MWIRE/Production/LCH 
+    Devices: for system /RIGS/MWIRE/Production/LCH 
+
+System /RIGS/MWIRE/Production/MEMC 
+    Devices: for system /RIGS/MWIRE/Production/MEMC 
+
+System /RIGS/MWIRE/Production/MQ 
+    Devices: for system /RIGS/MWIRE/Production/MQ 
+
+System /RIGS/MWIRE/Production/OAS 
+    Devices: for system /RIGS/MWIRE/Production/OAS 
+
+System /RIGS/MWIRE/Production/REPO 
+    Devices: for system /RIGS/MWIRE/Production/REPO 
+
+System /RIGS/MWIRE/Production/TMS 
+    Devices: for system /RIGS/MWIRE/Production/TMS  prodapp16 ,
+
+System /RIGS/MWIRE/Production/TNL 
+    Devices: for system /RIGS/MWIRE/Production/TNL 
 
 System /RIGS/MWIRE/Rig1 
-    Devices: for system /RIGS/MWIRE/Rig1  testapp14 , testapp15 , testdb20 , testdb33 , testdb33_app ,
+    Devices: for system /RIGS/MWIRE/Rig1  testapp14 , testapp15 , testdb20 , testdb33 ,
+
+System /RIGS/MWIRE/Rig1/DBS 
+    Devices: for system /RIGS/MWIRE/Rig1/DBS  testdb33 ,
+
+System /RIGS/MWIRE/Rig1/EU 
+    Devices: for system /RIGS/MWIRE/Rig1/EU 
+
+System /RIGS/MWIRE/Rig1/MEMC 
+    Devices: for system /RIGS/MWIRE/Rig1/MEMC 
+
+System /RIGS/MWIRE/Rig1/OAS 
+    Devices: for system /RIGS/MWIRE/Rig1/OAS  testdb20 ,
+
+System /RIGS/MWIRE/Rig1/REPO 
+    Devices: for system /RIGS/MWIRE/Rig1/REPO  testapp14 ,
 
 System /RIGS/MWIRE/Rig1/TMS 
     Devices: for system /RIGS/MWIRE/Rig1/TMS  testapp14 , testapp15 ,
+
+System /RIGS/MWIRE/Rig1/UTNL 
+    Devices: for system /RIGS/MWIRE/Rig1/UTNL 
+
+System /RIGS/MWIRE/Rig2 
+    Devices: for system /RIGS/MWIRE/Rig2  testdb20 , testdb33 ,
+
+System /RIGS/MWIRE/Rig2/CEQC 
+    Devices: for system /RIGS/MWIRE/Rig2/CEQC 
+
+System /RIGS/MWIRE/Rig2/DBS 
+    Devices: for system /RIGS/MWIRE/Rig2/DBS  testdb33 ,
+
+System /RIGS/MWIRE/Rig2/EU 
+    Devices: for system /RIGS/MWIRE/Rig2/EU 
+
+System /RIGS/MWIRE/Rig2/MEMC 
+    Devices: for system /RIGS/MWIRE/Rig2/MEMC 
+
+System /RIGS/MWIRE/Rig2/OAS 
+    Devices: for system /RIGS/MWIRE/Rig2/OAS  testdb20 ,
+
+System /RIGS/MWIRE/Rig2/REPO 
+    Devices: for system /RIGS/MWIRE/Rig2/REPO 
+
+System /RIGS/MWIRE/Rig2/TMS 
+    Devices: for system /RIGS/MWIRE/Rig2/TMS 
+
+System /RIGS/MWIRE/Rig3 
+    Devices: for system /RIGS/MWIRE/Rig3  testapp36 , testdb20 , testdb33 ,
+
+System /RIGS/MWIRE/Rig3/DBS 
+    Devices: for system /RIGS/MWIRE/Rig3/DBS  testdb33 ,
+
+System /RIGS/MWIRE/Rig3/EU 
+    Devices: for system /RIGS/MWIRE/Rig3/EU 
+
+System /RIGS/MWIRE/Rig3/MEMC 
+    Devices: for system /RIGS/MWIRE/Rig3/MEMC 
+
+System /RIGS/MWIRE/Rig3/OAS 
+    Devices: for system /RIGS/MWIRE/Rig3/OAS  testdb20 ,
+
+System /RIGS/MWIRE/Rig3/REPO 
+    Devices: for system /RIGS/MWIRE/Rig3/REPO 
+
+System /RIGS/MWIRE/Rig3/TMS 
+    Devices: for system /RIGS/MWIRE/Rig3/TMS  testapp36 ,
+
+System /RIGS/MWIRE/Rig4 
+    Devices: for system /RIGS/MWIRE/Rig4  testdb33 ,
+
+System /RIGS/MWIRE/Rig4/DBS 
+    Devices: for system /RIGS/MWIRE/Rig4/DBS  testdb33 ,
+
+System /RIGS/MWIRE/Rig4/EU 
+    Devices: for system /RIGS/MWIRE/Rig4/EU 
+
+System /RIGS/MWIRE/Rig4/MEMC 
+    Devices: for system /RIGS/MWIRE/Rig4/MEMC 
+
+System /RIGS/MWIRE/Rig4/REPO 
+    Devices: for system /RIGS/MWIRE/Rig4/REPO 
+
+System /RIGS/MWIRE/Rig4/TMS 
+    Devices: for system /RIGS/MWIRE/Rig4/TMS 
+
+System /RIGS/MWIRE/Rig5 
+    Devices: for system /RIGS/MWIRE/Rig5 
+
+System /RIGS/MWIRE/Rig5/EU 
+    Devices: for system /RIGS/MWIRE/Rig5/EU 
+
+System /RIGS/MWIRE/Rig5/MEMC 
+    Devices: for system /RIGS/MWIRE/Rig5/MEMC 
+
+System /RIGS/MWIRE/Rig5/REPO 
+    Devices: for system /RIGS/MWIRE/Rig5/REPO 
+
+System /RIGS/MWIRE/Rig5/TMS 
+    Devices: for system /RIGS/MWIRE/Rig5/TMS 
+
+System /RIGS/MWIRE/Rig6 
+    Devices: for system /RIGS/MWIRE/Rig6 
+
+System /RIGS/MWIRE/Rig6/EU 
+    Devices: for system /RIGS/MWIRE/Rig6/EU 
+
+System /RIGS/MWIRE/Rig6/MEMC 
+    Devices: for system /RIGS/MWIRE/Rig6/MEMC 
+
+System /RIGS/MWIRE/Rig6/REPO 
+    Devices: for system /RIGS/MWIRE/Rig6/REPO 
+
+System /RIGS/MWIRE/Rig6/TMS 
+    Devices: for system /RIGS/MWIRE/Rig6/TMS 
+
+System /RIGS/MWIRE/Rig7 
+    Devices: for system /RIGS/MWIRE/Rig7 
+
+System /RIGS/MWIRE/Rig7/EU 
+    Devices: for system /RIGS/MWIRE/Rig7/EU 
+
+System /RIGS/MWIRE/Rig7/MEMC 
+    Devices: for system /RIGS/MWIRE/Rig7/MEMC 
+
+System /RIGS/MWIRE/Rig7/TMS 
+    Devices: for system /RIGS/MWIRE/Rig7/TMS 
+
+System /RIGS/MWIRE/Rig8 
+    Devices: for system /RIGS/MWIRE/Rig8 
+
+System /RIGS/MWIRE/Rig8/EU 
+    Devices: for system /RIGS/MWIRE/Rig8/EU 
+
+System /RIGS/MWIRE/Rig8/MEMC 
+    Devices: for system /RIGS/MWIRE/Rig8/MEMC 
+
+System /RIGS/MWIRE/Rig8/REPO 
+    Devices: for system /RIGS/MWIRE/Rig8/REPO 
+
+System /RIGS/MWIRE/Rig8/TMS 
+    Devices: for system /RIGS/MWIRE/Rig8/TMS 
+
+System /RIGS/MWIRE/TEST 
+    Devices: for system /RIGS/MWIRE/TEST 
+
+System /RIGS/MWIRE/TEST/MQ 
+    Devices: for system /RIGS/MWIRE/TEST/MQ 
+
+System /RIGS/MWIRE/TestProd1 
+    Devices: for system /RIGS/MWIRE/TestProd1 
+
+System /RIGS/MWIRE/TestProd1/EU 
+    Devices: for system /RIGS/MWIRE/TestProd1/EU 
+
+System /RIGS/MWIRE/TestProd1/REPO 
+    Devices: for system /RIGS/MWIRE/TestProd1/REPO 
+
+System /RIGS/MWIRE/TestProd1/TMS 
+    Devices: for system /RIGS/MWIRE/TestProd1/TMS 
+
+System /RIGS/MWIRE/TestProd2 
+    Devices: for system /RIGS/MWIRE/TestProd2 
+
+System /RIGS/MWIRE/TestProd2/REPO 
+    Devices: for system /RIGS/MWIRE/TestProd2/REPO 
+
+System /RIGS/MWIRE/TestProd2/TMS 
+    Devices: for system /RIGS/MWIRE/TestProd2/TMS 
+
+System /RIGS/MWIRE/TestProd3 
+    Devices: for system /RIGS/MWIRE/TestProd3 
+
+System /RIGS/MWIRE/TestProd3/TMS 
+    Devices: for system /RIGS/MWIRE/TestProd3/TMS 
+
+System /RIGS/MWIRE/Training 
+    Devices: for system /RIGS/MWIRE/Training 
+
+System /RIGS/MWIRE/Training/EU 
+    Devices: for system /RIGS/MWIRE/Training/EU 
+
+System /RIGS/MWIRE/Training/OAS 
+    Devices: for system /RIGS/MWIRE/Training/OAS 
+
+System /RIGS/MWIRE/Training/TMS 
+    Devices: for system /RIGS/MWIRE/Training/TMS 
+
+System /RIGS/MWIRE/Training/UTNL 
+    Devices: for system /RIGS/MWIRE/Training/UTNL 
+
+System /RIGS/MWIRE/UAT 
+    Devices: for system /RIGS/MWIRE/UAT 
+
+System /RIGS/MWIRE/UAT/CEQC 
+    Devices: for system /RIGS/MWIRE/UAT/CEQC 
+
+System /RIGS/MWIRE/UAT/DBS 
+    Devices: for system /RIGS/MWIRE/UAT/DBS 
+
+System /RIGS/MWIRE/UAT/EU 
+    Devices: for system /RIGS/MWIRE/UAT/EU 
+
+System /RIGS/MWIRE/UAT/JBOSS 
+    Devices: for system /RIGS/MWIRE/UAT/JBOSS 
+
+System /RIGS/MWIRE/UAT/MEMC 
+    Devices: for system /RIGS/MWIRE/UAT/MEMC 
+
+System /RIGS/MWIRE/UAT/MQ 
+    Devices: for system /RIGS/MWIRE/UAT/MQ 
+
+System /RIGS/MWIRE/UAT/OAS 
+    Devices: for system /RIGS/MWIRE/UAT/OAS 
+
+System /RIGS/MWIRE/UAT/REPO 
+    Devices: for system /RIGS/MWIRE/UAT/REPO 
+
+System /RIGS/MWIRE/UAT/TMS 
+    Devices: for system /RIGS/MWIRE/UAT/TMS 
+
+System /RIGS/MWIRE/UAT/UTNL 
+    Devices: for system /RIGS/MWIRE/UAT/UTNL 
+
+System /RIGS/MWIRE/UAT2 
+    Devices: for system /RIGS/MWIRE/UAT2 
+
+System /RIGS/MWIRE/UAT2/EU 
+    Devices: for system /RIGS/MWIRE/UAT2/EU 
+
+System /RIGS/MWIRE/UAT2/REPO 
+    Devices: for system /RIGS/MWIRE/UAT2/REPO 
+
+System /RIGS/MWIRE/UAT2/TMS 
+    Devices: for system /RIGS/MWIRE/UAT2/TMS 
 

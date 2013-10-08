@@ -1,2 +1,11 @@
-Tue Oct  8 08:11:52 2013
+Tue Oct  8 13:53:19 2013
+
+System /RIGS/MWIRE 
+    Devices: for system /RIGS/MWIRE  prodapp16 , proddb22 , testapp14 , testapp15 , testapp36 , testdb20 , testdb33 , testdb33_app ,
+
+System /RIGS/MWIRE/Rig1 
+    Devices: for system /RIGS/MWIRE/Rig1  testapp14 , testapp15 , testdb20 , testdb33 , testdb33_app ,
+
+System /RIGS/MWIRE/Rig1/TMS 
+    Devices: for system /RIGS/MWIRE/Rig1/TMS  testapp14 , testapp15 ,
 

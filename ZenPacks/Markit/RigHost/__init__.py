@@ -8,7 +8,6 @@ import os
 unused(Globals)
 _plugins = [
     'rig_host_app_transform1.py',
-    'rig_manager_server.cfg',
     ]
 
 

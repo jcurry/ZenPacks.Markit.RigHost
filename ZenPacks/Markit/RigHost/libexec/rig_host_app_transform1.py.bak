@@ -7,8 +7,8 @@
 #                       Note an app may run on more than one host
 #
 # Rig name supplied as param 1 - must exist and be non-null
-# Host name supplied as param 2 - must exist and may be null
-# App name supplied as param 3 - must exist and may be null
+# Host name supplied as param 2 - must exist and may be All
+# App name supplied as param 3 - must exist and may be All
 # State to change to is param 4 - where 300 and 1000 are legal
 
 import sys
@@ -32,7 +32,7 @@ logfile = open(logfileName, 'a')
 localtime = time.asctime( time.localtime(time.time()) )
 logfile.write(localtime + "\n\n")
 
-# Null values will be set to the string 'None'
+# Null values will be set to the string 'All'
 try:
     rigname = sys.argv[1]
     hostname = sys.argv[2]
@@ -75,7 +75,7 @@ def getSystemFromRigAndApp(rigname, appname):
     return False
 
 if rigname:
-    if hostname != 'None':
+    if hostname != 'All':
         d=dmd.Devices.findDevice(hostname)   # Check that the hostname device exists
         if d:               # Check that the host device actually exists
             # Check that device d is in rig rigname
@@ -87,7 +87,7 @@ if rigname:
                             # If App name not supplied & Host name is, check all Apps for matching host name in cRigHost custom property (which is a list)
                             # This means command format is rig host start | stop
                             logfile.write('Rig Host format - rig = %s and host = %s \n' % (rigname, hostname)) 
-                            if appname == 'None':
+                            if appname == 'All':
                                 # deal with the host device first
                                 change_prodState(d, state)
                                 # Now do any apps associated with this device
@@ -111,7 +111,7 @@ if rigname:
             logfile.write('Error - hostname %s is supplied but device does not exist \n' % ( hostname)) 
             sys.exit('Error - hostname %s is supplied but device does not exist \n' % ( hostname))
 
-    elif appname != 'None':
+    elif appname != 'All':
         # This is the rig appname start | stop variant - need to check the cRigHost of appname for all  app devices in this System
         logfile.write('Rig App format - rig = %s and app = %s \n' % (rigname, appname)) 
         s = getSystemFromRigAndApp(rigname, appname)

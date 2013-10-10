@@ -176,5 +176,7 @@ User=jane Rig=MW-RIG3 App=testapp1 stop
 </object>
 </tomanycont>
 </object>
+<object id='Error' module='Products.ZenEvents.EventClass' class='EventClass'>
+</object>
 </object>
 </objects>

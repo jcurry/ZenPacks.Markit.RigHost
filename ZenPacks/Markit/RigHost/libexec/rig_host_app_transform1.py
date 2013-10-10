@@ -20,6 +20,8 @@ from Products.ZenUtils.ZenScriptBase import ZenScriptBase
 from Products.ZenUtils.Utils import unused
 from transaction import commit
 
+from subprocess import Popen,PIPE
+
 unused(Globals)
 
 dmd = ZenScriptBase(connect=True, noopts=True).dmd
@@ -41,10 +43,23 @@ try:
 except:
     logfile.write(' Error - need 4 arguments for this script \n')
 
+def genErrorEvent(message):
+    ZENOSS_SERVER = 'zen42.class.example.org'
+    zensendevent_basecmd = zenhome + '/bin/zensendevent'
+    zensendevent_params = ' -d ' + ZENOSS_SERVER + ' -s Error -c /Rig/Error ' + message
+    cmd = zensendevent_basecmd + zensendevent_params
+    logfile.write(' In genErrorEvent - cmd is %s \n' % (cmd))
+    try:
+        Popen(cmd, shell=True, stdout=PIPE,stderr=PIPE)
+    except:
+        logfile.write(' Error generating zensendevent error event \n')
+
+
 def change_prodState(host, state):
     ''' host is a device object
         state is either '300' for maintenance' or '1000' for production
     '''
+
 
     logfile.write(' Time: %s Before change host.id is %s, host.preMWProductionState is %s, host.productionState is %s \n' % (localtime, host.id, host.preMWProductionState, host.productionState))
     if state == '300':
@@ -79,7 +94,7 @@ if rigname:
         d=dmd.Devices.findDevice(hostname)   # Check that the hostname device exists
         if d:               # Check that the host device actually exists
             # Check that device d is in rig rigname
-            for s in dmd.Systems.getSubOrganizers():
+            for s in dmd.Systems.RIGS.MWIRE.getSubOrganizers():
                 if s.id == rigname:
                 # Get all the hosts in rigname
                     for d1 in s.getSubDevices():
@@ -105,10 +120,17 @@ if rigname:
                                             if a.getDeviceClassPath().startswith('/Application'):      #Application device
                                                 if hostname in a.cRigHost:              #and the application device cRigHost includes hostname
                                                     change_prodState(a, state)
-                                sys.exit(0)
-
+                                    sys.exit(0)
+                                else:
+                                    # if we don't have a legal system combination then sys.exit(1)
+                                    genErrorEvent('Error - rigname %s / appname %s combination does not deliver a valid System  \n' % ( rigname, appname))
+                                    sys.exit('Error - rigname %s / appname %s combination does not deliver a valid System  \n' % ( rigname, appname))
+                    # If we get here then we have a rig / hostname pair that Zenoss doesn't know about
+                    genErrorEvent('Error - rigname %s / appname %s combination does not deliver a valid System  \n' % ( rigname, appname))
+                    sys.exit('Error - rigname %s / appname %s combination does not deliver a valid System  \n' % ( rigname, appname))
         else:   # hostname is supplied but device d does not exist
             logfile.write('Error - hostname %s is supplied but device does not exist \n' % ( hostname)) 
+            genErrorEvent('Error - hostname %s is supplied but device does not exist \n' % ( hostname))
             sys.exit('Error - hostname %s is supplied but device does not exist \n' % ( hostname))
 
     elif appname != 'All':
@@ -117,28 +139,37 @@ if rigname:
         s = getSystemFromRigAndApp(rigname, appname)
         if s:
             for a in s.getSubDevices():
+                # The application device must be a member of the System where system is eg. Rig1/TMS
+                # TODO: Check with Georges that this is valid
+                # An app in several rigs will only be changed in this particular rig/app combination
                 if a.getDeviceClassPath().startswith('/Application'):
                     change_prodState(a, state)
             sys.exit(0)
         else:           #rigname / appname combination does not deliver a valid System
             logfile.write('Error - rigname %s / appname %s combination does not deliver a valid System  \n' % ( rigname, appname)) 
+            genErrorEvent('Error - rigname %s / appname %s combination does not deliver a valid System  \n' % ( rigname, appname))
             sys.exit('Error - rigname %s / appname %s combination does not deliver a valid System  \n' % ( rigname, appname))
 
     else:
         # This is the simple rig start / stop
         logfile.write('Rig format - rig = %s \n' % (rigname)) 
-        for s in dmd.Systems.getSubOrganizers():
+        for s in dmd.Systems.RIGS.MWIRE.getSubOrganizers():
         # Get all the hosts in rigname
             if s.id == rigname:
                 for d in s.getSubDevices():
                     change_prodState(d, state)
+                    # TODO: Check with Georges - should we follow cRigHost anyway?????
                     # Now do any apps associated with this device
                     #  This isn't necessary the devices should be part of the System anyway - no need to follow cRigHost link
-                    #for a in dmd.Devices.Application.getSubDevices():
-                    #    if d.id in a.cRigHost:
-                    #        change_prodState(a, state)
+                    for a in dmd.Devices.Application.getSubDevices():
+                        if d.id in a.cRigHost:
+                            change_prodState(a, state)
                 sys.exit(0)
+        # If we get here then we didn't find the rugname
+        genErrorEvent('Error - rigname doesnt exist as valid system' )
+        sys.exit('Error - rigname doesnt exist as valid system' )
 else:
     # Error
     logfile.write('Error - no rigname supplied \n' ) 
+    genErrorEvent('Error - no rigname supplied' )
     sys.exit('Error - no rigname supplied' )

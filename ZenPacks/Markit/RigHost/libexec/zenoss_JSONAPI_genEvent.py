@@ -1,17 +1,19 @@
 #!/usr/bin/env python
-
-# Zenoss-4.x JSON API Example (python)
 #
-# To quickly explore, execute 
-#   python -i zenoss_JSONAPI_genEvent.py --summary='User=jane Rig=MW-RIG3 Host=testapp36 start' --device=zen42.class.example.org --component='' --severity=Info --evclasskey=Rig
+# Author:               Jane Curry
+# Date                  October 7th, 2013
+# Description:          Generates Zenoss event using JSON API
+#                       Lines at top may need modifying for Zenoss server, port and https
+#                       Requires parameters for device, severity, evclasskey and summary where summary in format
+#                          User=jane Rig=Rig3 Host=testdb33 App=DBS stop
+# Updates:              October 21st 2013
+#                       Modified user parameter to gather info directly from environment if ommited from summary string
 #
-# >>> z = sendEventsWithJSON()
-# >>> newEvent = z.add_event(options.summary, options.device, options.component, options.severity, options.evclasskey, options.evclass)
-
 
 import json
 import urllib
 import urllib2
+import os
 from optparse import OptionParser
 
 #ZENOSS_INSTANCE = 'http://ZENOSS-SERVER:8080'
@@ -30,17 +32,7 @@ else:
 ZENOSS_USERNAME = 'admin'
 ZENOSS_PASSWORD = 'zenoss'
 
-ROUTERS = { 'MessagingRouter': 'messaging',
-            'EventsRouter': 'evconsole',
-            'ProcessRouter': 'process',
-            'ServiceRouter': 'service',
-            'DeviceRouter': 'device',
-            'NetworkRouter': 'network',
-            'TemplateRouter': 'template',
-            'DetailNavRouter': 'detailnav',
-            'ReportRouter': 'report',
-            'MibRouter': 'mib',
-            'ZenPackRouter': 'zenpack' }
+ROUTERS = { 'EventsRouter': 'evconsole',}
 
 class sendEventsWithJSON():
     def __init__(self, debug=False):
@@ -122,7 +114,7 @@ if __name__ == "__main__":
 
     parser = OptionParser(usage)
     parser.add_option("--summary", dest='summary',
-                        help='eg. \'User=jane Rig=Rig3 Host=testdb33 App=DBS stop\'')
+                        help='eg. \'User=jane Rig=Rig3 Host=testdb33 App=DBS stop. If user ommitted then $USER is used\'')
     parser.add_option("--device", dest='device',
                         help='eg. --device=\'zen42.class.example.org\'')
     parser.add_option("--component", dest='component',
@@ -143,14 +135,14 @@ if __name__ == "__main__":
     if option_dict['severity'] not in ('Critical', 'Error', 'Warning', 'Info', 'Debug', 'Clear'):
         raise Exception('Severity "' + option_dict['severity'] +'" is not valid.')
 
-    #if option_dict['severity']:
-    #    option_dict['severity'] = option_dict['severity'].split(',')
+    summary = option_dict['summary']
+    if summary.find('User') == -1:
+        username = os.getenv('USER')
+        summary = 'User=' + username + ' ' + summary
 
-    #print 'options is %s \n' % (options)
-    #print 'option_dict is %s \n' % (option_dict)
 
     events = sendEventsWithJSON()
-    newEvent = events.add_event(options.summary, options.device, options.component, options.severity, options.evclasskey, options.evclass)
+    newEvent = events.add_event(summary, options.device, options.component, options.severity, options.evclasskey, options.evclass)
 
     print(newEvent)
 

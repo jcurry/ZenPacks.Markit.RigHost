@@ -44,7 +44,7 @@ except:
     logfile.write(' Error - need 4 arguments for this script \n')
 
 def genErrorEvent(message):
-    ZENOSS_SERVER = 'zen42.class.example.org'
+    ZENOSS_SERVER = 'mon-uat-hub.mserv.local'
     zensendevent_basecmd = zenhome + '/bin/zensendevent'
     zensendevent_params = ' -d ' + ZENOSS_SERVER + ' -s Error -c /Rig/Error ' + message
     cmd = zensendevent_basecmd + zensendevent_params
@@ -123,11 +123,11 @@ if rigname:
                                     sys.exit(0)
                                 else:
                                     # if we don't have a legal system combination then sys.exit(1)
-                                    genErrorEvent('Error - rigname %s / appname %s combination does not deliver a valid System  \n' % ( rigname, appname))
-                                    sys.exit('Error - rigname %s / appname %s combination does not deliver a valid System  \n' % ( rigname, appname))
+                                    genErrorEvent('Error - rigname %s / hostname %s / appname %s combination does not deliver a valid System  \n' % ( rigname, hostname, appname))
+                                    sys.exit('Error - rigname %s / hostname %s / appname %s combination does not deliver a valid System  \n' % ( rigname, hostname, appname))
                     # If we get here then we have a rig / hostname pair that Zenoss doesn't know about
-                    genErrorEvent('Error - rigname %s / appname %s combination does not deliver a valid System  \n' % ( rigname, appname))
-                    sys.exit('Error - rigname %s / appname %s combination does not deliver a valid System  \n' % ( rigname, appname))
+                    genErrorEvent('Error - rigname %s / hostname %s combination does not deliver a valid System  \n' % ( rigname, hostname))
+                    sys.exit('Error - rigname %s / hostname %s combination does not deliver a valid System  \n' % ( rigname, hostname))
         else:   # hostname is supplied but device d does not exist
             logfile.write('Error - hostname %s is supplied but device does not exist \n' % ( hostname)) 
             genErrorEvent('Error - hostname %s is supplied but device does not exist \n' % ( hostname))
@@ -165,7 +165,7 @@ if rigname:
                         if d.id in a.cRigHost:
                             change_prodState(a, state)
                 sys.exit(0)
-        # If we get here then we didn't find the rugname
+        # If we get here then we didn't find the rigname
         genErrorEvent('Error - rigname doesnt exist as valid system' )
         sys.exit('Error - rigname doesnt exist as valid system' )
 else:

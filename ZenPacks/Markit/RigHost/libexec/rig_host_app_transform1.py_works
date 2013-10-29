@@ -117,7 +117,6 @@ if rigname:
                                 logfile.write('System is %s \n' % (s))
                                 if s:           # We have a legal System 
                                     for a in s.getSubDevices():
-                                        # App device must be a member of the System
                                             if a.getDeviceClassPath().startswith('/Application'):      #Application device
                                                 if hostname in a.cRigHost:              #and the application device cRigHost includes hostname
                                                     change_prodState(a, state)
@@ -163,8 +162,7 @@ if rigname:
                     # Now do any apps associated with this device
                     #  This isn't necessary the devices should be part of the System anyway - no need to follow cRigHost link
                     for a in dmd.Devices.Application.getSubDevices():
-                        #if d.id in a.cRigHost:
-                        if d.titleOrId() in a.cRigHost:
+                        if d.id in a.cRigHost:
                             change_prodState(a, state)
                 sys.exit(0)
         # If we get here then we didn't find the rigname

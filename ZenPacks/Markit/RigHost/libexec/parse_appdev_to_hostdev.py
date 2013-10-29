@@ -9,15 +9,13 @@
 
 import time
 import os
-import re
 
 import Globals
 from Products.ZenUtils.ZenScriptBase import ZenScriptBase
 from Products.ZenUtils.Utils import unused
-import transaction
-from ZODB.transact import transact
-
 from transaction import commit
+#from ZODB.transact import transact
+
 
 unused(Globals)
 
@@ -29,102 +27,124 @@ logfileName = zenhome + '/log/parse_appdev_to_hostdev.log'
 
 logfile = open(logfileName, 'a')
 localtime = time.asctime( time.localtime(time.time()) )
-logfile.write(localtime + "\n\n")
+logfile.write('\n' + localtime + "\n\n")
 
-# ZenPack __init__.py copies some files from the ZP libexec to $ZENHOME/libexec
 rmfName = zenhome + '/libexec/appdev_to_hostdev.cfg'
 rmf = open(rmfName, 'r')
-
-mysys = re.compile('^(?P<rig>\w+),(?!CERT,)(?P<host>\w+),(?P<app>\w+),')
 
 sync = dmd.zport._p_jar.sync
 sync()
 
-# Add a host to a system if that host exists in the Zope database
-# Return True if syccessful; returns False if update failed or host didn't exist
-# ZODB database updates should be single transactions
-@transact
-def addHostToSys(host, sys):
-    d=dmd.Devices.findDevice(host)
-    if d:
-        oldsys = d.getSystemNames()
-        oldsys.append(sys)
-        try:
-            logfile.write( 'Updating systems with %s . New system is %s . Host is %s \n' % (sys, oldsys, host))
-            d.updateDevice(systemPaths = oldsys)
-            commit()
-            return True
-        except:
-            logfile.write( 'Error adding host %s to system %s \n' % (host, sys))
-            return False
-    return False
-
-
-# Clean out all systems under /RIGS/MWIRE first
-# create a context for the sync function
-
 #@transact
-#def delOrgs():
-#    dmd.Systems.manage_deleteOrganizer('/Systems/RIGS/MWIRE')
-#
-#delOrgs()
-#
-#commit()
+def setRigHost(appdev, hostdev):
+    a=dmd.Devices.findDevice(appdev)
+    if a:
+        h = dmd.Devices.findDevice(hostdev)
+        if h:
+            # Do we need to allow for multiple host devices? Yes?
+            # So should we append to the existing cRigHost list?
+            # If so, what deletes old entries?
+            # need to check existence of a.cRigHost as it appears to default to the null string,
+            #      not an empty list
+            # NOTE: Do NOT set properties directly (eg a.cRigHost = ['fred'] - this will cause havoc such
+            #   that the GUI does not see the property.  Always use the setZenProperrty method
 
-# Collect updates in updateList
-updateList = []
+            if a.cRigHost:
+                if not hostdev in a.cRigHost:
+                    newRigHost = a.cRigHost
+                    newRigHost.append(hostdev)
+                    a.setZenProperty('cRigHost',newRigHost)
+                else:
+                    logfile.write( ' In setRigHost. App device %s already has RigHost property including %s \n ' % (appdev, hostdev))
+            else:
+                a.setZenProperty('cRigHost', [hostdev])
+
+            commit()
+            logfile.write( ' In setRigHost. App device %s now has host dev %s added. cRigHost now set to %s \n' % (appdev, hostdev, a.cRigHost))
+            return True
+        else:    
+            logfile.write( ' In setRigHost. Host device %s does not exist in Zenoss database. \n' % (hostdev))
+            return False
+    else:
+        logfile.write( ' In setRigHost. App device %s does not exist in Zenoss database. \n' % (appdev))
+        return False
+
+def setSysForHost(appdev, targetSys):
+    # Do we need to append this system to an existing system list or do we overwrite any existing systems?  Append?
+    # If append, how do we clean out unwanted systems?
+
+    foundSys = False
+    for s in dmd.Systems.getSubOrganizers():
+        if s.getOrganizerName() == targetSys:
+            d = dmd.Devices.findDevice(appdev)
+            currSys = d.getSystemNames()
+            logfile.write('In setSysForHost.  targetSys is %s and currSys is %s \n ' % (targetSys, currSys))
+            if not targetSys in currSys:                # Check whether targetSys already in system list
+                currSys.append(targetSys)
+                d.setSystems(currSys)
+                logfile.write( ' In setSysForHost. Setting system for device %s to %s \n ' % (appdev, currSys))
+                #d.setSystems(currSys.append(targetSys))
+                commit()
+            else:
+                logfile.write( ' In setSysForHost. Device %s is already a member of System %s \n ' % (appdev, targetSys))
+
+            foundSys = True
+            break
+
+    if not foundSys:
+        logfile.write( ' In setSysForHost. Target system %s does not exist \n ' % (targetSys))
+
 
 for line in rmf:
     #logfile.write( 'line is %s \n' % (line))
-    s = mysys.match(line)
-    if s:
-        rig = s.group('rig')
-        host = s.group('host')
-        app =  s.group('app')
-        newsys = '/RIGS/MWIRE/' + rig + '/' + app
-        logfile.write( ' Rig is %s, host is %s, app is %s newsys is %s\n' % (rig, host, app, newsys))
-        # Create a system under /Systems - /RIGS and/or /RIGS/MWIRE are automatically created if they don't exist
-        #
-        SysMatch = False
-        for d in dmd.Systems.getSubOrganizers():
-          logfile.write(' checking suborganizers.  newsys is %s d.getOrganizerName() is %s \n' % ( newsys, d.getOrganizerName()))
-          if d.getOrganizerName() == newsys and d.getOrganizerName().startswith('/RIGS/MWIRE/'):    # Found an existing system
-            SysMatch = True
-            logfile.write(' Found system match.  newsys is %s d.getOrganizerName() is %s \n' % ( newsys, d.getOrganizerName()))
-            HostMatch = False
-            for h in d.getSubDevices():
-              if h.titleOrId() == host:       # found matching host for this existing system
-                logfile.write( 'In host match loop - found existing host - host is %s and h.id is %s and system is %s\n' % (host, h.id, newsys))
-                HostMatch = True
-                break
-            # Search exhausted - this host doesn't exist in this system
-            # Add host to system
-            if not HostMatch:
-                #addHostToSys(host, newsys)
-                if addHostToSys(host, newsys):
-                    updateList.append((host,newsys))
-            break            # System already exists - get out of here
-        # Search exhausted - no match found so add this new system
+    # Examples
+    # line1='/Application/EGUS,fiaegus.markit.com,Active,Buyside,Production,'
+    # line2='/Application/INTEROP/QA/ICE,interop.qa.ice,Active,MarkitWire,,'
+    # line3='/Application/SSL_Certificate_Checks,creditcentre.markitserv.com.443,Not Monitored,n/a,Production,'
+    # line4= '/Application/Process_Monitors/MTM,mtm_webapp_server_5_prod,Active,Buyside,Production,mtmprodappa1'
+    # line5='/MarkitDatabases,GC_Application_Server,Active,MarkitWire,n/a,n/a'
+    # line6='/MarkitDatabases,PRD00GTW,Active,MarkitWire,Production,instance only are bound a host'
+    #
+    # We always get 6 fields. Some may be null or n/a
 
-        if not SysMatch:
-          logfile.write( 'Found a new system %s \n' % (newsys))
-          try:
-              @transact
-              def addOrg():
-                  dmd.Systems.manage_addOrganizer(newsys)
-                  dmd.Systems.getOrganizer(newsys).description='Added by parse_rig_manager_script at ' + localtime
-              addOrg()
-              commit()
-          except:
-              transaction.abort()
-              logfile.write("Encountered error. adding system %s\n" % (newsys))
-              raise
-          # Add host to system
-          if addHostToSys(host, newsys):
-              updateList.append((host,newsys))
+    if not line.startswith('#'):
+        splitline=line.split(',')
+        if len(splitline) == 6:
+            appdev = splitline[1].strip()
+            hostdev = splitline[5].strip()
+            #
+            logfile.write( ' App device is %s and host dev is %s \n' % (appdev, hostdev))
+            appside = splitline[3].strip()
+            rig = splitline[4].strip()
+            appclass = splitline[0].strip()
+            #appclassname = appclass.split('/')[-1]              # the application name is the last part of the device class eg. EU, TMS, ...
+            #appclassname = appclass.split('/')
+            # Get a list of all the unique leaf-node system names (apps from the point-of-view of Systems)
+            legalSysList = []
+            for s in dmd.Systems.RIGS.MWIRE.getSubOrganizers():
+                if not s.getSubOrganizers():
+                    if not s.id in legalSysList:
+                        legalSysList.append(s.id)
+            appname = ''
+            for s in legalSysList:
+                if appclass.find(s) != -1:
+                    appname = s
+                    break
+            logfile.write( ' App name is %s \n ' % (appname))
+             
 
+            if appdev and hostdev and hostdev != 'n/a' and hostdev.find(' ') == -1:
+                if setRigHost(appdev, hostdev):                 # RigHost property successfully set or was already correct
+                    if appside == 'MarkitWire':
+                        if rig:                                 #If rig not supplied then we definately won't find a system
+                            #targetSys = '/RIGS/MWIRE/' + rig + '/' + appclassname
+                            targetSys = '/RIGS/MWIRE/' + rig + '/' + appname
+                            logfile.write( 'Target system is %s for app device %s \n ' % (targetSys, appdev))
+                            setSysForHost(appdev, targetSys)
+                        else:
+                            logfile.write( 'No rig field supplied')
+                    else:
+                        logfile.write( 'appside is not MarkitWire - appside %s not currently implemented \n ' % (appside))
 
-commit()
-for host, newsys in updateList:
-    print ' Updated host / system is %s / %s \n' % (host, newsys)
+                
 

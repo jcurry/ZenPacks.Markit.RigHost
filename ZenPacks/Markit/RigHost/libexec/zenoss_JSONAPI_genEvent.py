@@ -14,6 +14,7 @@ import json
 import urllib
 import urllib2
 import os
+import sys
 from optparse import OptionParser
 
 #ZENOSS_INSTANCE = 'http://ZENOSS-SERVER:8080'
@@ -135,6 +136,12 @@ if __name__ == "__main__":
     if option_dict['severity'] not in ('Critical', 'Error', 'Warning', 'Info', 'Debug', 'Clear'):
         raise Exception('Severity "' + option_dict['severity'] +'" is not valid.')
 
+    if not option_dict['device']:
+        device = os.getenv('HOSTNAME')
+    else:
+        device = option_dict['device']
+    print 'device is %s \n ' % (device)
+
     summary = option_dict['summary']
     if summary.find('User') == -1:
         username = os.getenv('USER')
@@ -142,7 +149,14 @@ if __name__ == "__main__":
 
 
     events = sendEventsWithJSON()
-    newEvent = events.add_event(summary, options.device, options.component, options.severity, options.evclasskey, options.evclass)
-
+    newEvent = events.add_event(summary, device, options.component, options.severity, options.evclasskey, options.evclass)
     print(newEvent)
+    try:
+        if newEvent['result']['msg'].find('Created event') != -1:
+            os._exit(0)
+        else:
+            os._exit('Failed - no created event in message')
+    except:
+        os._exit('Failed in try clause')
+
 

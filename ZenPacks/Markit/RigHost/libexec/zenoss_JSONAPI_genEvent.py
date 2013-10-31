@@ -142,7 +142,6 @@ if __name__ == "__main__":
         device = os.getenv('HOSTNAME')
     else:
         device = option_dict['device']
-    print 'device is %s \n ' % (device)
 
     summary = option_dict['summary']
     if summary.find('User') == -1:

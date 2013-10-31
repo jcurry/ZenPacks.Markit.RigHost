@@ -20,18 +20,20 @@ from optparse import OptionParser
 #ZENOSS_INSTANCE = 'http://ZENOSS-SERVER:8080'
 # Change the next line(s) to suit your environment
 #
-ZENOSS_SERVER="zen42.class.example.org"
+#ZENOSS_SERVER="zen42.class.example.org"
+ZENOSS_SERVER="mon-uat-hub.serv.local"
 #ZENOSS_PORT="8080"
 ZENOSS_PORT=""
 
-#ZENOSS_INSTANCE = 'http://zen42.class.example.org:8080'
 if ZENOSS_PORT:
     ZENOSS_INSTANCE = 'https://' + ZENOSS_SERVER + ':' + ZENOSS_PORT
 else:
     ZENOSS_INSTANCE = 'https://' + ZENOSS_SERVER
 
-ZENOSS_USERNAME = 'admin'
-ZENOSS_PASSWORD = 'zenoss'
+ZENOSS_USERNAME = 'MonAPI'
+ZENOSS_PASSWORD = 'monapipwd'
+#ZENOSS_USERNAME = 'admin'
+#ZENOSS_PASSWORD = 'zenoss'
 
 ROUTERS = { 'EventsRouter': 'evconsole',}
 

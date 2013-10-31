@@ -47,7 +47,7 @@ def setRigHost(appdev, hostdev):
             # need to check existence of a.cRigHost as it appears to default to the null string,
             #      not an empty list
             # NOTE: Do NOT set properties directly (eg a.cRigHost = ['fred'] - this will cause havoc such
-            #   that the GUI does not see the property.  Always use the setZenProperrty method
+            #   that the GUI does not see the property.  Always use the setZenProperty method
 
             if a.cRigHost:
                 if not hostdev in a.cRigHost:
@@ -98,47 +98,49 @@ def setSysForHost(appdev, targetSys):
 for line in rmf:
     #logfile.write( 'line is %s \n' % (line))
     # Examples
-    # line1='/Application/EGUS,fiaegus.markit.com,Active,Buyside,Production,'
-    # line2='/Application/INTEROP/QA/ICE,interop.qa.ice,Active,MarkitWire,,'
-    # line3='/Application/SSL_Certificate_Checks,creditcentre.markitserv.com.443,Not Monitored,n/a,Production,'
-    # line4= '/Application/Process_Monitors/MTM,mtm_webapp_server_5_prod,Active,Buyside,Production,mtmprodappa1'
-    # line5='/MarkitDatabases,GC_Application_Server,Active,MarkitWire,n/a,n/a'
-    # line6='/MarkitDatabases,PRD00GTW,Active,MarkitWire,Production,instance only are bound a host'
+    # line1='/Application/EGUS,fiaegus.markit.com,Active,Buyside,Production,,,,appcat'
+    # line2='/Application/INTEROP/QA/ICE,interop.qa.ice,Active,MarkitWire,,JBOSS,,,'
+    # line3='/Application/SSL_Certificate_Checks,creditcentre.markitserv.com.443,Not Monitored,n/a,Production,,,,'
+    # line4='/Application/Process_Monitors/MTM,mtm_webapp_server_5_prod,Active,Buyside,Production,,mtmprodappa1,,'
+    # line5='/MarkitDatabases,GC_Application_Server,Active,MarkitWire,n/a,DBS,n/a,,'
+    # line6='/MarkitDatabases,PRD00GTW,Active,MarkitWire,Production,DBS,instance only are bound a host,,'
+    # line7='/Application/MarkitWire/TMS/TMS_Pulse,TMS_Pulse_prodapp16,Active,MarkitWire,Production,TMS,prodapp16,,'
     #
-    # We always get 6 fields. Some may be null or n/a
+    # We always get 9 fields. Some may be null or n/a
 
     if not line.startswith('#'):
         splitline=line.split(',')
-        if len(splitline) == 6:
+        if len(splitline) == 9:
             appdev = splitline[1].strip()
-            hostdev = splitline[5].strip()
+            hostdev = splitline[6].strip()
             #
             logfile.write( ' App device is %s and host dev is %s \n' % (appdev, hostdev))
             appside = splitline[3].strip()
             rig = splitline[4].strip()
-            appclass = splitline[0].strip()
+            appcat = splitline[5].strip()                       #appcat is what we know as the app name eg. TMS, DBS, ..
+            #appclass = splitline[0].strip()
             #appclassname = appclass.split('/')[-1]              # the application name is the last part of the device class eg. EU, TMS, ...
             #appclassname = appclass.split('/')
             # Get a list of all the unique leaf-node system names (apps from the point-of-view of Systems)
-            legalSysList = []
-            for s in dmd.Systems.RIGS.MWIRE.getSubOrganizers():
-                if not s.getSubOrganizers():
-                    if not s.id in legalSysList:
-                        legalSysList.append(s.id)
-            appname = ''
-            for s in legalSysList:
-                if appclass.find(s) != -1:
-                    appname = s
-                    break
-            logfile.write( ' App name is %s \n ' % (appname))
+            #legalSysList = []
+            #for s in dmd.Systems.RIGS.MWIRE.getSubOrganizers():
+            #    if not s.getSubOrganizers():
+            #        if not s.id in legalSysList:
+            #            legalSysList.append(s.id)
+            # Try to get appname from the app device class  - not perfect .....
+            #appname = ''
+            #for s in legalSysList:
+            #    if appclass.find(s) != -1:
+            #        appname = s
+            #        break
+            #logfile.write( ' App name is %s \n ' % (appname))
              
 
             if appdev and hostdev and hostdev != 'n/a' and hostdev.find(' ') == -1:
                 if setRigHost(appdev, hostdev):                 # RigHost property successfully set or was already correct
                     if appside == 'MarkitWire':
                         if rig:                                 #If rig not supplied then we definately won't find a system
-                            #targetSys = '/RIGS/MWIRE/' + rig + '/' + appclassname
-                            targetSys = '/RIGS/MWIRE/' + rig + '/' + appname
+                            targetSys = '/RIGS/MWIRE/' + rig + '/' + appcat
                             logfile.write( 'Target system is %s for app device %s \n ' % (targetSys, appdev))
                             setSysForHost(appdev, targetSys)
                         else:

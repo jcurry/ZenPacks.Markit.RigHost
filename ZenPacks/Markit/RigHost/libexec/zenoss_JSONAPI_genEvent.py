@@ -21,7 +21,7 @@ from optparse import OptionParser
 # Change the next line(s) to suit your environment
 #
 #ZENOSS_SERVER="zen42.class.example.org"
-ZENOSS_SERVER="mon-uat-hub.serv.local"
+ZENOSS_SERVER="mon-uat-hub.mserv.local"
 #ZENOSS_PORT="8080"
 ZENOSS_PORT=""
 

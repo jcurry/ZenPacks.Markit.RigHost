@@ -32,8 +32,6 @@ else:
 
 ZENOSS_USERNAME = 'MonAPI'
 ZENOSS_PASSWORD = 'monapipwd'
-#ZENOSS_USERNAME = 'admin'
-#ZENOSS_PASSWORD = 'zenoss'
 
 ROUTERS = { 'EventsRouter': 'evconsole',}
 
@@ -42,19 +40,23 @@ class sendEventsWithJSON():
         """
         Initialize the API connection, log in, and store authentication cookie
         """
-        # Use the HTTPCookieProcessor as urllib2 does not save cookies by default
-        self.urlOpener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
-        if debug: self.urlOpener.add_handler(urllib2.HTTPHandler(debuglevel=1))
-        self.reqCount = 1
+        try:
+            # Use the HTTPCookieProcessor as urllib2 does not save cookies by default
+            self.urlOpener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
+            if debug: self.urlOpener.add_handler(urllib2.HTTPHandler(debuglevel=1))
+            self.reqCount = 1
 
-        # Contruct POST params and submit login.
-        loginParams = urllib.urlencode(dict(
-                        __ac_name = ZENOSS_USERNAME,
-                        __ac_password = ZENOSS_PASSWORD,
-                        submitted = 'true',
-                        came_from = ZENOSS_INSTANCE + '/zport/dmd'))
-        self.urlOpener.open(ZENOSS_INSTANCE + '/zport/acl_users/cookieAuthHelper/login',
-                            loginParams)
+            # Contruct POST params and submit login.
+            loginParams = urllib.urlencode(dict(
+                            __ac_name = ZENOSS_USERNAME,
+                            __ac_password = ZENOSS_PASSWORD,
+                            submitted = 'true',
+                            came_from = ZENOSS_INSTANCE + '/zport/dmd'))
+            self.urlOpener.open(ZENOSS_INSTANCE + '/zport/acl_users/cookieAuthHelper/login',
+                                loginParams)
+        except:
+            print 'Failed to open communications connection'
+            sys.exit(1)
 
     def _router_request(self, router, method, data=[]):
         if router not in ROUTERS:
@@ -158,6 +160,6 @@ if __name__ == "__main__":
         else:
             os._exit('Failed - no created event in message')
     except:
-        os._exit('Failed in try clause')
+        os._exit('Failed in try clause - event not well formed')
 
 

@@ -57,6 +57,8 @@ def addHostToSys(host, sys):
         except:
             logfile.write( 'Error adding host %s to system %s \n' % (host, sys))
             return False
+    else:
+        logfile.write( 'Error adding host %s - it does not exist in the Zenoss database \n' % (host))
     return False
 
 
@@ -81,20 +83,23 @@ for line in rmf:
         rig = s.group('rig')
         host = s.group('host')
         app =  s.group('app')
+        # The EU app from the server file is known as WEB by the Rig Manager group
+        if app == 'EU':
+          app = 'WEB'
         newsys = '/RIGS/MWIRE/' + rig + '/' + app
         logfile.write( ' Rig is %s, host is %s, app is %s newsys is %s\n' % (rig, host, app, newsys))
         # Create a system under /Systems - /RIGS and/or /RIGS/MWIRE are automatically created if they don't exist
         #
         SysMatch = False
         for d in dmd.Systems.getSubOrganizers():
-          logfile.write(' checking suborganizers.  newsys is %s d.getOrganizerName() is %s \n' % ( newsys, d.getOrganizerName()))
+          #logfile.write(' checking suborganizers.  newsys is %s d.getOrganizerName() is %s \n' % ( newsys, d.getOrganizerName()))
           if d.getOrganizerName() == newsys and d.getOrganizerName().startswith('/RIGS/MWIRE/'):    # Found an existing system
             SysMatch = True
             logfile.write(' Found system match.  newsys is %s d.getOrganizerName() is %s \n' % ( newsys, d.getOrganizerName()))
             HostMatch = False
             for h in d.getSubDevices():
               if h.titleOrId() == host:       # found matching host for this existing system
-                logfile.write( 'In host match loop - found existing host - host is %s and h.id is %s and system is %s\n' % (host, h.id, newsys))
+                #logfile.write( 'In host match loop - found existing host - host is %s and h.id is %s and system is %s\n' % (host, h.id, newsys))
                 HostMatch = True
                 break
             # Search exhausted - this host doesn't exist in this system

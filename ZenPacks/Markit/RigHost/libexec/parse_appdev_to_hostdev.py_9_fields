@@ -16,9 +16,11 @@ from Products.ZenUtils.Utils import unused
 from transaction import commit
 #from ZODB.transact import transact
 
+
 unused(Globals)
 
 dmd = ZenScriptBase(connect=True, noopts=True).dmd
+
 
 zenhome = os.environ['ZENHOME']
 logfileName = zenhome + '/log/parse_appdev_to_hostdev.log'
@@ -72,34 +74,30 @@ def setSysForHost(appdev, targetSys):
     # If append, how do we clean out unwanted systems?
 
     foundSys = False
-    d = dmd.Devices.findDevice(appdev)
-    if d:
-        for s in dmd.Systems.getSubOrganizers():
-            if s.getOrganizerName() == targetSys:
-                currSys = d.getSystemNames()
-                logfile.write('In setSysForHost.  targetSys is %s and currSys is %s \n ' % (targetSys, currSys))
-                if not targetSys in currSys:                # Check whether targetSys already in system list
-                    currSys.append(targetSys)
-                    d.setSystems(currSys)
-                    logfile.write( ' In setSysForHost. Setting system for device %s to %s \n ' % (appdev, currSys))
-                    #d.setSystems(currSys.append(targetSys))
-                    commit()
-                else:
-                    logfile.write( ' In setSysForHost. Device %s is already a member of System %s \n ' % (appdev, targetSys))
-                foundSys = True
-                break
-        if not foundSys:
-            logfile.write( ' In setSysForHost. Target system %s does not exist \n ' % (targetSys))
-    else:
-        logfile.write( ' Device %s does not exist in Zope database \n ' % (appdev))
+    for s in dmd.Systems.getSubOrganizers():
+        if s.getOrganizerName() == targetSys:
+            d = dmd.Devices.findDevice(appdev)
+            currSys = d.getSystemNames()
+            logfile.write('In setSysForHost.  targetSys is %s and currSys is %s \n ' % (targetSys, currSys))
+            if not targetSys in currSys:                # Check whether targetSys already in system list
+                currSys.append(targetSys)
+                d.setSystems(currSys)
+                logfile.write( ' In setSysForHost. Setting system for device %s to %s \n ' % (appdev, currSys))
+                #d.setSystems(currSys.append(targetSys))
+                commit()
+            else:
+                logfile.write( ' In setSysForHost. Device %s is already a member of System %s \n ' % (appdev, targetSys))
+
+            foundSys = True
+            break
+
+    if not foundSys:
+        logfile.write( ' In setSysForHost. Target system %s does not exist \n ' % (targetSys))
 
 
 for line in rmf:
     #logfile.write( 'line is %s \n' % (line))
     # Examples
-
-    #classPath,id,productionState,Appside,Rig,AppCat,Host,,for
-
     # line1='/Application/EGUS,fiaegus.markit.com,Active,Buyside,Production,,,,appcat'
     # line2='/Application/INTEROP/QA/ICE,interop.qa.ice,Active,MarkitWire,,JBOSS,,,'
     # line3='/Application/SSL_Certificate_Checks,creditcentre.markitserv.com.443,Not Monitored,n/a,Production,,,,'
@@ -109,15 +107,10 @@ for line in rmf:
     # line7='/Application/MarkitWire/TMS/TMS_Pulse,TMS_Pulse_prodapp16,Active,MarkitWire,Production,TMS,prodapp16,,'
     #
     # We always get 9 fields. Some may be null or n/a
-    #
-    # Updated Jan 23rd, 2014 - now get 7 fields - no longer get ,,<for> on the end
-    #
-    # classPath,id,productionState,Appside,Rig,AppCat,Host
 
     if not line.startswith('#'):
         splitline=line.split(',')
-        #if len(splitline) == 9:
-        if len(splitline) == 7:
+        if len(splitline) == 9:
             appdev = splitline[1].strip()
             hostdev = splitline[6].strip()
             #
@@ -125,12 +118,9 @@ for line in rmf:
             appside = splitline[3].strip()
             rig = splitline[4].strip()
             appcat = splitline[5].strip()                       #appcat is what we know as the app name eg. TMS, DBS, ..
-            appclass = splitline[0].strip()
-            # Jan 23rd, 2014 - dont need the following as appcat provides the leaf-node system name
-
             #appclass = splitline[0].strip()
             #appclassname = appclass.split('/')[-1]              # the application name is the last part of the device class eg. EU, TMS, ...
-            ##appclassname = appclass.split('/')
+            #appclassname = appclass.split('/')
             # Get a list of all the unique leaf-node system names (apps from the point-of-view of Systems)
             #legalSysList = []
             #for s in dmd.Systems.RIGS.MWIRE.getSubOrganizers():
@@ -146,11 +136,8 @@ for line in rmf:
             #logfile.write( ' App name is %s \n ' % (appname))
              
 
-            a=dmd.Devices.findDevice(appdev)
-            if a:
-                if hostdev and hostdev != 'n/a' and hostdev.find(' ') == -1:
-                    setRigHost(appdev, hostdev)                 # RigHost property successfully set or was already correct
-                if appclass.startswith('/Application'):
+            if appdev and hostdev and hostdev != 'n/a' and hostdev.find(' ') == -1:
+                if setRigHost(appdev, hostdev):                 # RigHost property successfully set or was already correct
                     if appside == 'MarkitWire':
                         if rig:                                 #If rig not supplied then we definately won't find a system
                             targetSys = '/RIGS/MWIRE/' + rig + '/' + appcat
@@ -160,8 +147,6 @@ for line in rmf:
                             logfile.write( 'No rig field supplied')
                     else:
                         logfile.write( 'appside is not MarkitWire - appside %s not currently implemented \n ' % (appside))
-                else:
-                    logfile.write( 'Device %s in class %s - nothing done as class doesnt start with /Application \n' % (appdev, appclass))
 
                 
 

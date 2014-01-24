@@ -8,7 +8,18 @@
 #                          User=jane Rig=Rig3 Host=testdb33 App=DBS stop
 # Updates:              October 21st 2013
 #                       Modified user parameter to gather info directly from environment if ommited from summary string
+#                       January 24th 2014
+#                       Sample commands added
 #
+# Sample commands:      ./zenoss_JSONAPI_genEvent.py --evclasskey=Rig --summary='Rig=Production Host=prodapp16 App=TMS stop' --severity=Warning
+#                       ./zenoss_JSONAPI_genEvent.py --evclasskey=Rig --summary='Rig=Production Host=prodapp16 App=TMS start' --severity=Info
+#                       ./zenoss_JSONAPI_genEvent.py --evclasskey=Rig --summary='Rig=Production Host=prodapp15 App=TMS stop' --severity=Warning
+#                                - should create a /Rig/Error event as prodapp15 does not exist
+#                       ./zenoss_JSONAPI_genEvent.py --evclasskey=Rig --summary='Rig=Production stop' --severity=Warning
+#                       ./zenoss_JSONAPI_genEvent.py --evclasskey=Rig --summary='Rig=Production start' --severity=Info
+#                       ./zenoss_JSONAPI_genEvent.py --evclasskey=Rig --summary='Rig=Rig3 Host=testdb33 stop' --severity=Warning
+#                       ./zenoss_JSONAPI_genEvent.py --evclasskey=Rig --summary='Rig=Rig3 Host=testdb33 start' --severity=Info
+
 
 import json
 import urllib
@@ -20,8 +31,8 @@ from optparse import OptionParser
 #ZENOSS_INSTANCE = 'http://ZENOSS-SERVER:8080'
 # Change the next line(s) to suit your environment
 #
-#ZENOSS_SERVER="zen42.class.example.org"
-ZENOSS_SERVER="mon-uat-hub.mserv.local"
+ZENOSS_SERVER="zen42.class.example.org"
+#ZENOSS_SERVER="mon-uat-hub.mserv.local"
 #ZENOSS_PORT="8080"
 ZENOSS_PORT=""
 

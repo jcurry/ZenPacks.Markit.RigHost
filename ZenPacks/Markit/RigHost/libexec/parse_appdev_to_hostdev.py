@@ -153,6 +153,9 @@ for line in rmf:
                 if appclass.startswith('/Application'):
                     if appside == 'MarkitWire':
                         if rig:                                 #If rig not supplied then we definately won't find a system
+                            # The EU app from the server file is known as WEB by the Rig Manager group
+                            if appcat == 'EU':
+                                appcat = 'WEB'
                             targetSys = '/RIGS/MWIRE/' + rig + '/' + appcat
                             logfile.write( 'Target system is %s for app device %s \n ' % (targetSys, appdev))
                             setSysForHost(appdev, targetSys)

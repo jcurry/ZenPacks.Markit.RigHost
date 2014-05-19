@@ -8,6 +8,7 @@ import os
 unused(Globals)
 _plugins = [
     'rig_host_app_transform1.py',
+    'copy_server_config_file.sh',
     ]
 
 

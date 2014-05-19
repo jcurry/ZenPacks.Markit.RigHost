@@ -44,7 +44,7 @@ except:
     logfile.write(' Error - need 4 arguments for this script \n')
 
 def genErrorEvent(message):
-    ZENOSS_SERVER = 'mon-uat-hub.mserv.local'
+    ZENOSS_SERVER = 'mon_hub.mserv.local'
     zensendevent_basecmd = zenhome + '/bin/zensendevent'
     zensendevent_params = ' -d ' + ZENOSS_SERVER + ' -s Error -c /Rig/Error ' + message
     cmd = zensendevent_basecmd + zensendevent_params
